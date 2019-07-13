@@ -18,13 +18,14 @@ public class CustomerController {
   private CustomerService customerService;
 
 
-  @GetMapping("/{id}")
+  @GetMapping(value = "/{id}", produces = "application/json")
   private Customer getCustomer(@PathVariable long id) {
     return customerService.findCustomerById(id);
   }
 
-  @GetMapping
+  @GetMapping(produces = "application/json")
   private List<Customer> getAllCustomers() {
+    /*Customers gets converted to json object with the help of getters */
     return customerService.findAllCustomers();
   }
 
