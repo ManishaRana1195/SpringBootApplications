@@ -1,10 +1,7 @@
 package com.uh.manisharana.springbasics.models;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Address {
@@ -17,6 +14,9 @@ public class Address {
   private String city;
   private String state;
   private Long zipCode;
+
+  @OneToOne(mappedBy = "address", fetch = FetchType.LAZY)
+  private UserDetails userDetails;
 
   public int getId() {
     return id;
@@ -56,5 +56,13 @@ public class Address {
 
   public void setZipCode(Long zipCode) {
     this.zipCode = zipCode;
+  }
+
+  public UserDetails getUserDetails() {
+    return userDetails;
+  }
+
+  public void setUserDetails(UserDetails userDetails) {
+    this.userDetails = userDetails;
   }
 }

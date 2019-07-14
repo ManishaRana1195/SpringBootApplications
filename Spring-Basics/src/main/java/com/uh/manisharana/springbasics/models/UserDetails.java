@@ -3,6 +3,8 @@ package com.uh.manisharana.springbasics.models;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class UserDetails {
@@ -28,6 +30,8 @@ public class UserDetails {
   @Embedded
   private PhoneNumber officePhoneNumber;
 
+  @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER, optional = true)
+  private Address address;
 
   public void setId(int id) {
     this.id = id;
@@ -75,5 +79,13 @@ public class UserDetails {
 
   public void setOfficePhoneNumber(PhoneNumber officePhoneNumber) {
     this.officePhoneNumber = officePhoneNumber;
+  }
+
+  public Address getAddress() {
+    return address;
+  }
+
+  public void setAddress(Address address) {
+    this.address = address;
   }
 }

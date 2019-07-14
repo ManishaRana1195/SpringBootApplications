@@ -10,5 +10,6 @@
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping class="com.uh.manisharana.springbasics.models.UserDetails"/>
+        <mapping class="com.uh.manisharana.springbasics.models.Address"/>
     </session-factory>
 </hibernate-configuration>
