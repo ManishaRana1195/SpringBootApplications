@@ -8,6 +8,7 @@
         <property name="hibernate.connection.driver_class">org.h2.Driver</property>
         <property name="hibernate.connection.url">jdbc:h2:file:/home/manisharana/Documents/SpringBootApplications/Spring-Basics/target/h2database</property>
         <property name="hibernate.connection.username">sa</property>
-        <mapping class="com.uh.manisharana.springbasics.models.User"/>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <mapping class="com.uh.manisharana.springbasics.models.UserDetails"/>
     </session-factory>
 </hibernate-configuration>
