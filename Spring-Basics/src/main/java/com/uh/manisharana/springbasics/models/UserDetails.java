@@ -4,9 +4,11 @@ package com.uh.manisharana.springbasics.models;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
+@Table(name = "USERDETAILS")
 public class UserDetails {
 
   @Id
@@ -32,6 +34,9 @@ public class UserDetails {
 
   @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER, optional = true)
   private Address address;
+
+  @OneToMany
+  private List<Vehicle> vehicles;
 
   public void setId(int id) {
     this.id = id;

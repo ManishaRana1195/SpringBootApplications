@@ -11,5 +11,6 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping class="com.uh.manisharana.springbasics.models.UserDetails"/>
         <mapping class="com.uh.manisharana.springbasics.models.Address"/>
+        <mapping class="com.uh.manisharana.springbasics.models.Vehicle"/>
     </session-factory>
 </hibernate-configuration>

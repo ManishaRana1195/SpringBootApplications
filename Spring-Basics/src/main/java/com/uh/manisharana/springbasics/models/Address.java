@@ -13,6 +13,8 @@ public class Address {
   private String street;
   private String city;
   private String state;
+
+  @Column(name = "ZIPCODE")
   private Long zipCode;
 
   @OneToOne(mappedBy = "address", fetch = FetchType.LAZY)
