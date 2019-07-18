@@ -105,4 +105,9 @@ public class ConnectionTest {
     getResult(bsonFilter).into(results);
     assertEquals(3, results.size());
   }
+
+  @Test
+  public void testGettingSelectedFieldsUsingProjections() {
+    
+  }
 }
