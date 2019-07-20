@@ -35,8 +35,9 @@ public class UserDetails {
   @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER, optional = true)
   private Address address;
 
-  @OneToMany
+  @OneToMany(mappedBy = "userDetails")
   private List<Vehicle> vehicles;
+
 
   public void setId(int id) {
     this.id = id;

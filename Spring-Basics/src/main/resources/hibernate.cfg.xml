@@ -12,5 +12,8 @@
         <mapping class="com.uh.manisharana.springbasics.models.UserDetails"/>
         <mapping class="com.uh.manisharana.springbasics.models.Address"/>
         <mapping class="com.uh.manisharana.springbasics.models.Vehicle"/>
+        <mapping class="com.uh.manisharana.springbasics.models.BankAccount"/>
+        <mapping class="com.uh.manisharana.springbasics.models.CheckingBankAccount"/>
+        <mapping class="com.uh.manisharana.springbasics.models.SavingsBankAccount"/>
     </session-factory>
 </hibernate-configuration>

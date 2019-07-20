@@ -1,8 +1,6 @@
 package com.uh.manisharana.springbasics;
 
-import com.uh.manisharana.springbasics.models.Address;
-import com.uh.manisharana.springbasics.models.PhoneNumber;
-import com.uh.manisharana.springbasics.models.UserDetails;
+import com.uh.manisharana.springbasics.models.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -35,7 +33,16 @@ public class SpringBasicsApplication {
     address.setState("Texas");
     address.setZipCode(500617L);
 
+
+    BankAccount bankAccount = new BankAccount(100304,"Chase");
+    CheckingBankAccount checkingAccount = new CheckingBankAccount(190078, "Chase", 1200, 2000);
+    SavingsBankAccount savingsAccount = new SavingsBankAccount(290078, "Chase", 1500, 1500);
     currentSession.beginTransaction();
+    currentSession.save(bankAccount);
+    currentSession.save(checkingAccount);
+    currentSession.save(savingsAccount);
+
+
     currentSession.save(address);
     userDetails.setAddress(address);
     currentSession.save(userDetails);
