@@ -46,6 +46,7 @@ public class SpringBasicsApplication {
     currentSession.save(address);
     userDetails.setAddress(address);
     currentSession.save(userDetails);
+    currentSession.
     currentSession.getTransaction().commit();
 
   }

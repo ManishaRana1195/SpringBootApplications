@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "BANK_ACCOUNT")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class BankAccount {
 
   @Id
