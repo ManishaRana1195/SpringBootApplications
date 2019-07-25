@@ -8,8 +8,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,11 +18,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,10 +37,9 @@ public class ConnectionTest {
 
   private MongoClient mongoClient;
 
-  @BeforeAll
+  @Before
   public void setUp() {
     /*check later*/
-    mongoClient = MongoClients.create(dbUri);
   }
 
   @Test
@@ -108,6 +111,31 @@ public class ConnectionTest {
 
   @Test
   public void testGettingSelectedFieldsUsingProjections() {
-    
+    Document filter = new Document("cast", "Salma Hayek");
+    Document result = getResult(filter)
+        .limit(1)
+        .projection(new Document("year", 1).append("title", 1))
+        .iterator()
+        .tryNext();
+
+    assertNotNull(result);
+    assertEquals(3, result.keySet().size());
+    assertTrue(result.keySet().containsAll(Arrays.asList("_id", "year", "title")));
+
+    Document resultWithShortProjection = getResult(eq("cast", "Salma Hayek"))
+        .limit(1)
+        .projection(fields(include("year", "title")))
+        .iterator()
+        .tryNext();
+
+    assertEquals(result, resultWithShortProjection);
   }
+
+  @Test(expected = NoSuchElementException.class)
+  public void shouldThrowNoSuchElementException() {
+    Bson filter = eq("cast", "blaahBoohBojha");
+    Document next = getResult(filter).iterator().next();
+  }
+
+
 }
