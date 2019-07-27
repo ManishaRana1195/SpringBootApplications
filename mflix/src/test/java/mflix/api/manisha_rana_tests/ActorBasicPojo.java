@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import java.util.Date;
 import java.util.List;
 
-public class ActorBasic {
+public class ActorBasicPojo {
 
   @BsonProperty(value = "_id")
   private ObjectId id;

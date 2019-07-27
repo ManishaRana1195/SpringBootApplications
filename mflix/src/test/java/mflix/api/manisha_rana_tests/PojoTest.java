@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -82,15 +81,32 @@ public class PojoTest extends TicketTest {
     CodecRegistry defaultCodec = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
         CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
-    MongoCollection<ActorBasic> actors = testDb.getCollection("actors", ActorBasic.class).withCodecRegistry(defaultCodec);
+    MongoCollection<ActorBasicPojo> actors = testDb.getCollection("actors", ActorBasicPojo.class).withCodecRegistry(defaultCodec);
 
 
     Bson filter = eq("name", "Bruce Campbell");
-    ActorBasic actorBasic = actors.find(filter).iterator().tryNext();
+    ActorBasicPojo actorBasicPojo = actors.find(filter).iterator().tryNext();
 
-    assertNotNull(actorBasic);
-    assertEquals("Bruce Campbell", actorBasic.getName());
-    assertEquals(127, actorBasic.getNumOfMovies());
-    assertEquals(Collections.EMPTY_LIST, actorBasic.getAwards());
+    assertNotNull(actorBasicPojo);
+    assertEquals("Bruce Campbell", actorBasicPojo.getName());
+    assertEquals(127, actorBasicPojo.getNumOfMovies());
+    assertEquals(Collections.EMPTY_LIST, actorBasicPojo.getAwards());
+  }
+
+  @Test
+  public void testParsingDocumentWithCustomCodec() {
+    ActorCustomCodec customCodec = new ActorCustomCodec();
+
+    CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
+        MongoClientSettings.getDefaultCodecRegistry(),
+        CodecRegistries.fromCodecs(customCodec));       // Get registry from custom codec
+
+    MongoCollection<ActorCustomPojo> actors = testDb.getCollection("actors", ActorCustomPojo.class).withCodecRegistry(codecRegistry);
+
+    Bson filter = eq("name", "Natalie Portman");
+    ActorCustomPojo actorCustomPojo = actors.find(filter).iterator().tryNext();
+
+    assertNotNull(actorCustomPojo);
+    assertNotNull(actorCustomPojo.getId());
   }
 }

@@ -49,8 +49,8 @@ public class UsingPojoLesson extends AbstractLesson {
    *
    * In our first example we want to create a basic case where the
    * structure of the Actor class mimics a document from the actors
-   * collection, so we will call this class ActorBasic.
-   * @see ActorBasic
+   * collection, so we will call this class ActorBasicPojo.
+   * @see ActorBasicPojo
    *
    *
    * Before we start exploring, we need to set up our collection and throw
@@ -139,7 +139,7 @@ public class UsingPojoLesson extends AbstractLesson {
             fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
     // get a hold of our collection, using the codecRegistry, and
-    // specifying the ActorBasic class as our POJO for the
+    // specifying the ActorBasicPojo class as our POJO for the
     // pojoCodecRegistry.
 
     MongoCollection<ActorBasic> actors =
@@ -148,7 +148,7 @@ public class UsingPojoLesson extends AbstractLesson {
     // create a  query to retrieve a document with a given actor id.
     Bson queryFilter = new Document("_id", actor1Id);
 
-    // use our query to pipe our document into an ActorBasic object in one
+    // use our query to pipe our document into an ActorBasicPojo object in one
     // quick line
     ActorBasic pojoActor = actors.find(queryFilter).iterator().tryNext();
 
@@ -156,7 +156,7 @@ public class UsingPojoLesson extends AbstractLesson {
     Assert.assertNotNull(pojoActor);
 
     // let's also assert the type of Object, to make sure that we are
-    // indeed creating an ActorBasic
+    // indeed creating an ActorBasicPojo
     Assert.assertTrue(pojoActor instanceof ActorBasic);
 
     // now let's pull the same document from the collection and see if
@@ -175,14 +175,14 @@ public class UsingPojoLesson extends AbstractLesson {
 
   /* The first time we run this test it shouldn't work. Why is that?
    *
-   *  Well, our ActorBasic object is the only point of reference our
+   *  Well, our ActorBasicPojo object is the only point of reference our
    *  CodecRegistry has and it seems to me that it is missing some
    *  crucial information.
    *
-   *  Let us add @Bson annotations in the ActorBasic class.
-   *  These add the field name references as part of our ActorBasic
+   *  Let us add @Bson annotations in the ActorBasicPojo class.
+   *  These add the field name references as part of our ActorBasicPojo
    *  class, and the CodecRegistry is now able to see the corresponding
-   *  structure between the ActorBasic object and the document fields.
+   *  structure between the ActorBasicPojo object and the document fields.
    *
    *  This basic case of reading from the database is not always close to
    *  reality. As you have learned in earlier lessons, a field in a
