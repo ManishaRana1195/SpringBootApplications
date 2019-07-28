@@ -16,6 +16,13 @@ session.save()
 session.persist()
 session.get()
 session.delete(object)  - need to pass the object that needs to be deleted, hibernate findsById to find the object 
+session.update()
+
+Transient Object and Persistent Object:
+Transient Object is in hibernate session but not saved/persisted.
+Object is Persisted when session is committed.
+Hibernate tracks the object for changes.
+Once session is closed, object becomes detached. 
 
 
 

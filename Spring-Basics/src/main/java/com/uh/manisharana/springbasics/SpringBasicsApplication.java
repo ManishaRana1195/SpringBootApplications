@@ -45,9 +45,11 @@ public class SpringBasicsApplication {
 
     currentSession.save(address);
     userDetails.setAddress(address);
-    currentSession.save(userDetails);
-    currentSession.
-    currentSession.getTransaction().commit();
+    currentSession.save(userDetails);  // userDetails remains Transient
+
+    userDetails.setName("Manisha Rana");    /* Hibernate will keep track of updates after save
+                                                Even without an update, the user name will get updated */
+    currentSession.getTransaction().commit(); // userDetails is persisted
 
   }
 
