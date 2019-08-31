@@ -4,13 +4,16 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "BANK_ACCOUNT")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@NamedQuery(name = "BankAccount.byAccountId", query = "from BankAccount where accountId = :accountId")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class BankAccount {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
-  private int accountId;
+
+  @Column(name = "account_id")
+  private Integer accountId;
   private String bankName;
 
   public BankAccount(int accountId, String bankName) {
@@ -19,5 +22,21 @@ public class BankAccount {
   }
 
   public BankAccount() {
+  }
+
+  public String getBankName() {
+    return bankName;
+  }
+
+  public void setBankName(String bankName) {
+    this.bankName = bankName;
+  }
+
+  public int getAccountId() {
+    return accountId;
+  }
+
+  public void setAccountId(int accountId) {
+    this.accountId = accountId;
   }
 }

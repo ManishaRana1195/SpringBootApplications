@@ -4,10 +4,12 @@ import com.uh.manisharana.springbasics.models.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Date;
+import java.util.List;
 
 
 @SpringBootApplication
@@ -34,7 +36,7 @@ public class SpringBasicsApplication {
     address.setZipCode(500617L);
 
 
-    BankAccount bankAccount = new BankAccount(100304,"Chase");
+    BankAccount bankAccount = new BankAccount(100304, "Chase");
     CheckingBankAccount checkingAccount = new CheckingBankAccount(190078, "Chase", 1200, 2000);
     SavingsBankAccount savingsAccount = new SavingsBankAccount(290078, "Chase", 1500, 1500);
     currentSession.beginTransaction();
@@ -49,8 +51,15 @@ public class SpringBasicsApplication {
 
     userDetails.setName("Manisha Rana");    /* Hibernate will keep track of updates after save
                                                 Even without an update, the user name will get updated */
+    Query namedQuery = currentSession.getNamedQuery("BankAccount.byAccountId");
+    namedQuery.setInteger("accountId", 100304);
+
+    List<BankAccount> bankAcct = (List<BankAccount>) namedQuery.getResultList();
+    System.out.println(bankAcct.get(0).getBankName());
     currentSession.getTransaction().commit(); // userDetails is persisted
 
+    // criteria API 
+    //currentSession.createCriteria() ;
   }
 
 }

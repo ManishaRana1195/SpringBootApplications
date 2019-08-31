@@ -22,7 +22,15 @@ Transient Object and Persistent Object:
 Transient Object is in hibernate session but not saved/persisted.
 Object is Persisted when session is committed.
 Hibernate tracks the object for changes.
-Once session is closed, object becomes detached. 
+Once session is closed, object becomes detached.
+
+
+##Avoid SQL injection, use parameter binding and name placeholders. 
+
+Named queries - way to consolidate and organize queries int he application.
+
+Criteria API, Restrications, Projection -
+  
 
 
 
