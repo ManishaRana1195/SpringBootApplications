@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="tag" class="com.example.manisharana.DribbleClone.models.Tag"/>
+
+    <bean id="postType" class="com.example.manisharana.DribbleClone.models.PostType"/>
+
+    <bean id="post" class="com.example.manisharana.DribbleClone.models.Post" scope="prototype">
+        <property name="description" value="Blaah blaah baie"/>
+        <property name="numberOfLikes" value="#{1000}"/>
+        <property name="type"><null/></property>
+        <property name="tags">
+            <list>
+                <ref bean="tag"/>
+            </list>
+        </property>
+        <property name="">
+            <map key-type="" value-type=""/>
+        </property>
+        <property name="">
+            <props>
+                <prop key=""></prop>
+            </props>
+        </property>
+
+    </bean>
+
+</beans>
