@@ -5,6 +5,8 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.InsertOneOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
@@ -24,6 +26,8 @@ import org.springframework.context.annotation.Configuration;
 import java.text.MessageFormat;
 import java.util.Map;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.set;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -33,7 +37,7 @@ public class UserDao extends AbstractMFlixDao {
   private final MongoCollection<User> usersCollection;
   //TODO> Ticket: User Management - do the necessary changes so that the sessions collection
   //returns a Session object
-  private final MongoCollection<Document> sessionsCollection;
+  private final MongoCollection<Session> sessionsCollection;
 
   private final Logger log;
 
@@ -50,7 +54,8 @@ public class UserDao extends AbstractMFlixDao {
     log = LoggerFactory.getLogger(this.getClass());
     //TODO> Ticket: User Management - implement the necessary changes so that the sessions
     // collection returns a Session objects instead of Document objects.
-    sessionsCollection = db.getCollection("sessions");
+    sessionsCollection = db.getCollection("sessions", Session.class)
+        .withCodecRegistry(pojoCodecRegistry);
   }
 
   /**
@@ -61,7 +66,14 @@ public class UserDao extends AbstractMFlixDao {
    */
   public boolean addUser(User user) {
     //TODO > Ticket: Durable Writes -  you might want to use a more durable write concern here!
-    usersCollection.insertOne(user);
+    User userToBeInserted = usersCollection.find(eq("email", user.getEmail())).iterator().tryNext();
+    if (userToBeInserted != null) {
+      throw new IncorrectDaoOperation("Duplicate emails not allowed");
+    }
+    UpdateOptions updateOptions = new UpdateOptions();
+    updateOptions.upsert(true);
+    usersCollection.withWriteConcern(WriteConcern.MAJORITY).updateOne(eq("email", user.getEmail())
+        , new Document("$set", user), updateOptions);
     return true;
     //TODO > Ticket: Handling Errors - make sure to only add new users
     // and not users that already exist.
@@ -72,13 +84,20 @@ public class UserDao extends AbstractMFlixDao {
    * Creates session using userId and jwt token.
    *
    * @param userId - user string identifier
-   * @param jwt - jwt string token
+   * @param jwt    - jwt string token
    * @return true if successful
    */
   public boolean createUserSession(String userId, String jwt) {
     //TODO> Ticket: User Management - implement the method that allows session information to be
+    UpdateOptions updateOptions = new UpdateOptions();
+    updateOptions.upsert(true);
+
+    Session session = new Session();
+    session.setJwt(jwt);
+    session.setUserId(userId);
+    sessionsCollection.updateOne(eq("user_id", userId), new Document("$set", session), updateOptions);
     // stored in it's designated collection.
-    return false;
+    return true;
     //TODO > Ticket: Handling Errors - implement a safeguard against
     // creating a session with the same jwt token.
   }
@@ -90,9 +109,8 @@ public class UserDao extends AbstractMFlixDao {
    * @return User object or null.
    */
   public User getUser(String email) {
-    User user = null;
     //TODO> Ticket: User Management - implement the query that returns the first User object.
-    return user;
+    return usersCollection.find(eq("email", email)).first();
   }
 
   /**
@@ -102,14 +120,15 @@ public class UserDao extends AbstractMFlixDao {
    * @return Session object or null.
    */
   public Session getUserSession(String userId) {
-    //TODO> Ticket: User Management - implement the method that returns Sessions for a given
-    // userId
-    return null;
+    //TODO> Ticket: User Management - implement the method that returns Sessions for a given userId
+    return sessionsCollection.find(eq("user_id", userId)).iterator().tryNext();
   }
 
   public boolean deleteUserSessions(String userId) {
     //TODO> Ticket: User Management - implement the delete user sessions method
-    return false;
+    DeleteResult userSession = sessionsCollection.deleteOne(eq("user_id", userId));
+
+    return true;
   }
 
   /**
@@ -121,24 +140,33 @@ public class UserDao extends AbstractMFlixDao {
   public boolean deleteUser(String email) {
     // remove user sessions
     //TODO> Ticket: User Management - implement the delete user method
+    Bson user = eq("email", email);
+    User userToBeDeleted = usersCollection.find(user).iterator().tryNext();
+    if (userToBeDeleted != null) {
+      deleteUserSessions(email);
+    }
+    DeleteResult deletedEmail = usersCollection.deleteOne(user);
     //TODO > Ticket: Handling Errors - make this method more robust by
     // handling potential exceptions.
-    return false;
+    return true;
   }
 
   /**
    * Updates the preferences of an user identified by `email` parameter.
    *
-   * @param email - user to be updated email
+   * @param email           - user to be updated email
    * @param userPreferences - set of preferences that should be stored and replace the existing
-   *     ones. Cannot be set to null value
+   *                        ones. Cannot be set to null value
    * @return User object that just been updated.
    */
   public boolean updateUserPreferences(String email, Map<String, ?> userPreferences) {
-    //TODO> Ticket: User Preferences - implement the method that allows for user preferences to
-    // be updated.
+    //TODO> Ticket: User Preferences - implement the method that allows for user preferences to be updated.
+    if (userPreferences == null)
+      throw new IncorrectDaoOperation("User preferences cannot be null");
+
+    UpdateResult updateResult = usersCollection.updateOne(eq("email", email), set("preferences", userPreferences));
     //TODO > Ticket: Handling Errors - make this method more robust by
     // handling potential exceptions when updating an entry.
-    return false;
+    return true;
   }
 }

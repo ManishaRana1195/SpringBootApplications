@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -79,12 +81,22 @@ public class CommentDao extends AbstractMFlixDao {
    * returns the resulting Comment object.
    */
   public Comment addComment(Comment comment) {
-
-    // TODO> Ticket - Update User reviews: implement the functionality that enables adding a new
-    // comment.
+    if (comment.getId() == null) {
+      throw new IncorrectDaoOperation("Id is null");
+    }
+    // TODO> Ticket - Update User reviews: implement the functionality that enables adding a new comment.
+    Comment savedComment = getComment(comment.getId());
+    if (savedComment != null) {
+      throw new IncorrectDaoOperation("comment already exists");
+    }
+    try {
+      commentCollection.insertOne(comment);
+      return comment;
+    } catch (IncorrectDaoOperation ex) {
+      return null;
+    }
     // TODO> Ticket - Handling Errors: Implement a try catch block to
     // handle a potential write exception when given a wrong commentId.
-    return null;
   }
 
   /**
@@ -96,8 +108,8 @@ public class CommentDao extends AbstractMFlixDao {
    * <p>
    *
    * @param commentId - comment id string value.
-   * @param text - comment text to be updated.
-   * @param email - user email.
+   * @param text      - comment text to be updated.
+   * @param email     - user email.
    * @return true if successfully updates the comment text.
    */
   public boolean updateComment(String commentId, String text, String email) {
@@ -106,14 +118,27 @@ public class CommentDao extends AbstractMFlixDao {
     // user own comments
     // TODO> Ticket - Handling Errors: Implement a try catch block to
     // handle a potential write exception when given a wrong commentId.
-    return false;
+
+    try {
+      Bson findFilter = and(eq("_id", new ObjectId(commentId)), eq("email", email));
+      Comment comment = commentCollection.find(findFilter).iterator().tryNext();
+      if (comment == null) {
+        return false;
+      }
+
+      comment.setText(text);
+      commentCollection.findOneAndUpdate(findFilter, new Document("$set", comment));
+      return true;
+    } catch (IncorrectDaoOperation ex) {
+      return false;
+    }
   }
 
   /**
    * Deletes comment that matches user email and commentId.
    *
    * @param commentId - commentId string value.
-   * @param email - user email value.
+   * @param email     - user email value.
    * @return true if successful deletes the comment.
    */
   public boolean deleteComment(String commentId, String email) {

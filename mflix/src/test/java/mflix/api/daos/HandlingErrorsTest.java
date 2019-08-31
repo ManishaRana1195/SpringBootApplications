@@ -1,6 +1,9 @@
 package mflix.api.daos;
 
+import com.mongodb.*;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.connection.SslSettings;
 import mflix.api.models.User;
 import mflix.config.MongoDBConfiguration;
 import org.bson.Document;
@@ -24,7 +27,8 @@ public class HandlingErrorsTest extends TicketTest {
   private MovieDao mDao;
   private User testUser;
   private UserDao uDao;
-  @Autowired MongoClient mongoClient;
+  @Autowired
+  MongoClient mongoClient;
 
   @Value("${spring.mongodb.database}")
   String databaseName;

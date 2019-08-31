@@ -1,6 +1,8 @@
 package mflix.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.types.ObjectId;
 
 import java.util.Map;
 
@@ -8,11 +10,15 @@ public class User {
 
   private String name;
   private String email;
-  @JsonIgnore private String hashedpw;
+  @JsonIgnore
+  private String hashedpw;
 
   private boolean isAdmin;
 
   private Map<String, String> preferences;
+
+  @BsonProperty("_id")
+  private ObjectId id;
 
   public User() {
     super();
@@ -66,5 +72,13 @@ public class User {
 
   public void setAdmin(boolean admin) {
     isAdmin = admin;
+  }
+
+  public ObjectId getId() {
+    return id;
+  }
+
+  public void setId(ObjectId id) {
+    this.id = id;
   }
 }
